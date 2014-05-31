@@ -15,7 +15,7 @@ import java.util.ArrayList;
  */
 public class JSONHandler {
 
-    public static JSONObject readJSONFile(String filename)
+    public JSONObject readJSONFile(String filename)
     {
         JSONParser parser = new JSONParser();
         try {
@@ -36,7 +36,7 @@ public class JSONHandler {
         return null;
     }
 
-    public static void saveJSONString(String filename, String jsonString)
+    public void saveJSONString(String filename, String jsonString)
     {
         try
         {
@@ -51,7 +51,7 @@ public class JSONHandler {
         }
     }
 
-    public static void saveGenerationToJSON(ArrayList<String> jsonChromosome, String filename)
+    public void saveGenerationToJSON(ArrayList<String> jsonChromosome, String filename)
     {
         JSONObject generation = new JSONObject();
         int id = 0;
@@ -63,7 +63,7 @@ public class JSONHandler {
         saveJSONString(filename,generation.toJSONString());
     }
 
-    public static Integer jsonNumberToInt(Object obj)
+    public Integer jsonNumberToInt(Object obj)
     {
         Long l = (Long)obj;
         return Integer.valueOf(l.intValue());
