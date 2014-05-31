@@ -63,10 +63,4 @@ public class JSONHandler {
         saveJSONString(filename,generation.toJSONString());
     }
 
-    public Integer jsonNumberToInt(Object obj)
-    {
-        Long l = (Long)obj;
-        return Integer.valueOf(l.intValue());
-    }
-
 }

@@ -30,10 +30,10 @@ public class Chromosome implements Comparable<Chromosome> {
         int[] hiddenNodes = new int[hidden.size()];
         for(int i = 0; i < hidden.size(); i++)
         {
-            hiddenNodes[i] = JSONHandler.jsonNumberToInt(hidden.get(i));
+            hiddenNodes[i] = objToInteger(hidden.get(i));
         }
 
-        this.networkGene = new NetworkGene(JSONHandler.jsonNumberToInt(network.get("input")),hiddenNodes,JSONHandler.jsonNumberToInt(network.get("output")));
+        this.networkGene = new NetworkGene(objToInteger(network.get("input")),hiddenNodes, objToInteger(network.get("output")));
 
         JSONArray links = (JSONArray)chromosome.get("links");
         Iterator<JSONObject> linkIter = links.iterator();
@@ -42,9 +42,9 @@ public class Chromosome implements Comparable<Chromosome> {
             JSONObject obj = linkIter.next();
             double w = (Double)obj.get("w");
             boolean active = (Boolean)obj.get("isActivated");
-            int startLayer = JSONHandler.jsonNumberToInt(obj.get("startLayer"));
-            int startNode = JSONHandler.jsonNumberToInt(obj.get("startNode"));
-            int endNode = JSONHandler.jsonNumberToInt(obj.get("endNode"));
+            int startLayer = objToInteger(obj.get("startLayer"));
+            int startNode = objToInteger(obj.get("startNode"));
+            int endNode = objToInteger(obj.get("endNode"));
             this.linkGenes.add(new LinkGene(startLayer,startNode,endNode,w,active));
         }
     }
@@ -96,4 +96,13 @@ public class Chromosome implements Comparable<Chromosome> {
 
         return chromosome.toJSONString();
     }
+
+
+    // Function to cast Long values from a JSONARRAY to Integer.
+    private Integer objToInteger(Object obj)
+    {
+        Long l = (Long)obj;
+        return Integer.valueOf(l.intValue());
+    }
+
 }
