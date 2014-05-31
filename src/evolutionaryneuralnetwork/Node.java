@@ -1,8 +1,10 @@
+package evolutionaryneuralnetwork;
+
 import java.util.ArrayList;
 
 /**
  * Created by MagnusSnorri on 30/05/2014.
- * Node is an object in a Neural Network that is connected with Links. Each node can access the Nodes connected to
+ * evolutionaryneuralnetwork.Node is an object in a Neural Network that is connected with Links. Each node can access the Nodes connected to
  * it through ArrayList of links and using the weight of each link and the value of each node it is possible to
  * evaluate this node. Since this is a feed-forward network the node does not have information about it's
  * successors.
@@ -23,7 +25,7 @@ public class Node {
 
     /**
      * Add new link to the ArrayList of inputNodes.
-     * @param link Link connecting this node to previous layer.
+     * @param link evolutionaryneuralnetwork.Link connecting this node to previous layer.
      */
     public void addInputNode(Link link){inputNodes.add(link);}
 

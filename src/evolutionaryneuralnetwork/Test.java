@@ -1,3 +1,5 @@
+package evolutionaryneuralnetwork;
+
 import java.util.ArrayList;
 
 /**
@@ -26,7 +28,7 @@ class Test {
         }
         System.out.println("Done");
         /*
-        NeuralNetwork neuralNetwork = new NeuralNetwork(5, new int[]{8}, 3);
+        evolutionaryneuralnetwork.NeuralNetwork neuralNetwork = new evolutionaryneuralnetwork.NeuralNetwork(5, new int[]{8}, 3);
         double[] output = new double[2];
         output = neuralNetwork.evaluateNeuralNetwork(new double[]{0.4, -2.3, 3.4,-2.4,0.1});
         for(double d: output){

@@ -1,3 +1,5 @@
+package evolutionaryneuralnetwork;
+
 /**
  * Created by MagnusSnorri on 30/05/2014.
  */

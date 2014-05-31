@@ -1,3 +1,5 @@
+package evolutionaryneuralnetwork;
+
 import java.util.ArrayList;
 import java.util.Random;
 
@@ -43,7 +45,7 @@ public class NeuralNetwork {
      * @param numberOfHiddenNodes integer array representing the number of hidden layers and number
      *                            of nodes in each hidden layer.
      * @param numberOfOutputs number of Nodes in the output layer.
-     * @return ArrayList of Layer objects where each Layer object includes the Node objects in that
+     * @return ArrayList of evolutionaryneuralnetwork.Layer objects where each evolutionaryneuralnetwork.Layer object includes the evolutionaryneuralnetwork.Node objects in that
      *          layer.
      */
     private ArrayList<Layer> createNodes(int numberOfInputs, int[] numberOfHiddenNodes, int numberOfOutputs){
@@ -73,8 +75,8 @@ public class NeuralNetwork {
 
     /**
      * Initializes links between every pair of Nodes in two adjacent layers.
-     * @param networkLayers Input is ArrayList of Layer objects where each Layer object includes
-     *                      Node objects for that Layer in the Neural Network.
+     * @param networkLayers Input is ArrayList of evolutionaryneuralnetwork.Layer objects where each evolutionaryneuralnetwork.Layer object includes
+     *                      evolutionaryneuralnetwork.Node objects for that evolutionaryneuralnetwork.Layer in the Neural Network.
      */
     private void createLinks(ArrayList<Layer> networkLayers){
         ArrayList<Node> previousLayer;
