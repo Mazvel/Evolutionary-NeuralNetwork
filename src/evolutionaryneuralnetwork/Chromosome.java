@@ -4,6 +4,7 @@ import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 
 /**
  * Created by MagnusSnorri on 30/05/2014.
@@ -17,6 +18,35 @@ public class Chromosome implements Comparable<Chromosome> {
         this.networkGene = networkGene;
         this.linkGenes = linkGenes;
         fitnessValue = 0.0;
+    }
+
+    public Chromosome(JSONObject chromosome)
+    {
+        this.linkGenes = new ArrayList<LinkGene>();
+        this.fitnessValue = (Double)chromosome.get("fitness");
+
+        JSONObject network = (JSONObject)chromosome.get("network");
+        JSONArray hidden = (JSONArray)network.get("hidden");
+        int[] hiddenNodes = new int[hidden.size()];
+        for(int i = 0; i < hidden.size(); i++)
+        {
+            hiddenNodes[i] = JSONHandler.jsonNumberToInt(hidden.get(i));
+        }
+
+        this.networkGene = new NetworkGene(JSONHandler.jsonNumberToInt(network.get("input")),hiddenNodes,JSONHandler.jsonNumberToInt(network.get("output")));
+
+        JSONArray links = (JSONArray)chromosome.get("links");
+        Iterator<JSONObject> linkIter = links.iterator();
+        while (linkIter.hasNext())
+        {
+            JSONObject obj = linkIter.next();
+            double w = (Double)obj.get("w");
+            boolean active = (Boolean)obj.get("isActivated");
+            int startLayer = JSONHandler.jsonNumberToInt(obj.get("startLayer"));
+            int startNode = JSONHandler.jsonNumberToInt(obj.get("startNode"));
+            int endNode = JSONHandler.jsonNumberToInt(obj.get("endNode"));
+            this.linkGenes.add(new LinkGene(startLayer,startNode,endNode,w,active));
+        }
     }
 
     public void setFitnessValue(double fitnessValue){this.fitnessValue = fitnessValue;}
