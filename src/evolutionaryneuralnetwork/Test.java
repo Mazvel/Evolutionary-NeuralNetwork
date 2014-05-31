@@ -75,7 +75,7 @@ class Test {
         Logger log = new Logger("test.txt", true);
         log.Log("Hello");
 
-        /*Evolution evolution = new Evolution(0.2, 0.001, generationSize, 0.1, true);
+        Evolution evolution = new Evolution(0.2, 0.001, generationSize, 0.1, true);
         int numberOfGenerations = 200;
         int numberOfActions = 10;
         ArrayList<Chromosome> population = initializePopulation();
@@ -99,7 +99,7 @@ class Test {
         for(double d: output){
             System.out.println("Output: " + d);
         }
-        */
+
     }
 
     public static ArrayList<Chromosome> initializePopulation(){

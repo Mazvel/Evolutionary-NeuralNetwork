@@ -1,5 +1,6 @@
 package evolutionaryneuralnetwork;
 
+import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -33,20 +34,27 @@ public class Evolution {
             Collections.sort(currentPopulation, Collections.reverseOrder());
         }
         System.out.println("Best fitness value: " + currentPopulation.get(0).getFitnessValue());
-        List<Chromosome> fittestIndividuals = currentPopulation.subList(0,numberOfIndividualsForReproduction);
+        List<Chromosome> fittestIndividuals = new ArrayList<Chromosome>();
+        int uniqueIndividualsFound = 0;
+        double lastFitnessValue = 0.0;
+        while(uniqueIndividualsFound<numberOfIndividualsForReproduction){
+            //System.out.println("Stuck in first while...");
+            if(lastFitnessValue != currentPopulation.get(0).getFitnessValue()){
+                fittestIndividuals.add(currentPopulation.get(0));
+                lastFitnessValue = currentPopulation.get(0).getFitnessValue();
+                uniqueIndividualsFound++;
+            }
+            currentPopulation.remove(0);
+        }
         double[] cumulativeWeights = getCumulativeWeights(fittestIndividuals);
         Chromosome individualA;
         Chromosome individualB;
-        for(Chromosome c: currentPopulation){
+        for(int i = 0; i<generationSize;i++){
             individualA = fittestIndividuals.get(indexOfSelectedIndividual(cumulativeWeights, Math.random()));
             individualB = fittestIndividuals.get(indexOfSelectedIndividual(cumulativeWeights, Math.random()));
-            int counter = 0;
             while(individualA.equals(individualB)){
                 individualB = fittestIndividuals.get(indexOfSelectedIndividual(cumulativeWeights, Math.random()));
-                counter++;
-                if(counter > 100){
-                    counter = counter +1;
-                }
+                //System.out.println("Stuck in while");
             }
             Chromosome beforeMutation = crossoverChromosomes(individualA,individualB);
             Chromosome afterMutation = mutate(beforeMutation);
@@ -107,15 +115,35 @@ public class Evolution {
     }
     private LinkGene crossoverLinkGenes(LinkGene a, LinkGene b){
         Random r = new Random();
+
         double weightA = a.getWeight();
         double weightB = b.getWeight();
+        weightA = (double)Math.round(weightA * 100000) / 100000;
+        weightB = (double)Math.round(weightB * 100000) / 100000;
         double interval = Math.abs(weightA-weightB);
         double newWeight = (weightA+weightB)*0.5 + r.nextGaussian()*interval*2;
-      //  String binaryA = "0b" + Long.toBinaryString(Double.doubleToRawLongBits(a.getWeight()));
-      //  String binaryB = "0b" + Long.toBinaryString(Double.doubleToRawLongBits(b.getWeight()));
-     //   int crossOverPoint = randInt(0, binaryA.length());
-     //   String newBinary = binaryA.substring(0,crossOverPoint) + binaryB.substring(crossOverPoint+1,binaryB.length());
-    //    double newWeight = Double.longBitsToDouble(new BigInteger(newBinary, 2).longValue());
+      /* long weightALong = Double.doubleToRawLongBits(weightA);
+        long weightBLong = Double.doubleToRawLongBits(weightB);
+        long mask = -1L; // all bits set to 1
+        int crossOverPoint = randInt(0, Long.SIZE);
+        long combined;
+// treat special cases because of modulo Long.SIZE of second parameter of shifting operations
+        if (crossOverPoint == 0) {
+            combined = weightBLong;
+        } else if (crossOverPoint == Long.SIZE) {
+            combined = weightALong;
+        } else {
+            combined = (weightALong & (mask << (Long.SIZE - crossOverPoint))) |
+                    (weightBLong & (mask >>> crossOverPoint));
+        }
+        double newWeight = Double.longBitsToDouble(combined);
+
+       /* String binaryA = Long.toBinaryString(Double.doubleToRawLongBits(weightA));
+        String binaryB = Long.toBinaryString(Double.doubleToRawLongBits(weightB));
+        int crossOverPoint = randInt(0, binaryA.length());
+        String newBinary = binaryA.substring(0,crossOverPoint) + binaryB.substring(crossOverPoint+1,binaryB.length());
+        double newWeight = Double.longBitsToDouble(new BigInteger(newBinary, 2).longValue());
+        int tmp = (int)newWeight; */
         boolean newActivation;
         if(a.isActivated() == b.isActivated()){
             newActivation = a.isActivated();
@@ -174,7 +202,6 @@ public class Evolution {
                     newWeight = -newWeight;
 
                 }
-                l.setWeight(newWeight);
             }
 
             boolean newActivation = l.isActivated();
