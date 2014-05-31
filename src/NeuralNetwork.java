@@ -7,6 +7,10 @@ import java.util.Random;
 public class NeuralNetwork {
     private ArrayList<Layer> networkLayers;
     private double initialWeightInterval = 3;
+    private int numberOfInputs;
+    private int[] numberOfHiddenNodes;
+    private int numberOfOutputs;
+    ArrayList<LinkGene> linkGenes;
 
     /**
      *
@@ -16,8 +20,21 @@ public class NeuralNetwork {
      * @param numberOfOutputs number of Nodes in the output layer.
      */
     public NeuralNetwork(int numberOfInputs, int[] numberOfHiddenNodes, int numberOfOutputs){
+        this.numberOfInputs = numberOfInputs;
+        this.numberOfHiddenNodes = numberOfHiddenNodes;
+        this.numberOfOutputs = numberOfOutputs;
+        linkGenes = new ArrayList<LinkGene>();
         networkLayers = createNodes(numberOfInputs, numberOfHiddenNodes, numberOfOutputs);
         createLinks(networkLayers);
+    }
+    public NeuralNetwork(Chromosome chromosome){
+        this.numberOfInputs = chromosome.getNetworkGene().getNumberOfInputNodes();
+        this.numberOfHiddenNodes = chromosome.getNetworkGene().getNumberOfHiddenNodes();
+        this.numberOfOutputs = chromosome.getNetworkGene().getNumberOfOutputNodes();
+        networkLayers = createNodes(numberOfInputs, numberOfHiddenNodes, numberOfOutputs);
+        linkGenes = chromosome.getLinkGenes();
+        createLinks(networkLayers,linkGenes);
+
     }
 
     /**
@@ -69,9 +86,22 @@ public class NeuralNetwork {
             for(Node currentLayerNode: currentLayer){
                 for(Node previousLayerNode: previousLayer){
                     double weight = Math.random()*initialWeightInterval -0.5*initialWeightInterval;
-                    currentLayerNode.addInputNode(new Link(previousLayerNode, weight, r.nextBoolean()));
+                    boolean activated = r.nextBoolean();
+                    currentLayerNode.addInputNode(new Link(previousLayerNode, weight, activated));
+                    linkGenes.add(new LinkGene(i-1,previousLayer.indexOf(previousLayerNode),
+                            currentLayer.indexOf(currentLayerNode),weight,activated ));
+
                 }
             }
+        }
+    }
+
+    private void createLinks(ArrayList<Layer> networkLayers, ArrayList<LinkGene> linkGenes){
+        for(LinkGene linkGene: linkGenes){
+            Node startNode = networkLayers.get(linkGene.getStartLayer()).getNodes().get(linkGene.getStartNode());
+            Node endNode = networkLayers.get(linkGene.getStartLayer()+1).getNodes().get(linkGene.getEndNode());
+            Link link = new Link(startNode, linkGene.getWeight(), linkGene.isActivated());
+            endNode.addInputNode(link);
         }
     }
 
@@ -104,5 +134,11 @@ public class NeuralNetwork {
             outputVector[i] = outputLayer.get(i).getValue();
         }
         return outputVector;
+    }
+
+    public Chromosome generateChromosome(){
+        NetworkGene networkGene = new NetworkGene(numberOfInputs,numberOfHiddenNodes,numberOfOutputs);
+        return new Chromosome(networkGene,linkGenes);
+
     }
 }
