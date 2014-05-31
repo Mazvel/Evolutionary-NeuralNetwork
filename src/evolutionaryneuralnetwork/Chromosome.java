@@ -1,5 +1,8 @@
 package evolutionaryneuralnetwork;
 
+import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
+
 import java.util.ArrayList;
 
 /**
@@ -29,5 +32,38 @@ public class Chromosome implements Comparable<Chromosome> {
     public int compareTo(Chromosome chromosome)
     {
         return this.fitnessValue.compareTo(chromosome.getFitnessValue());
+    }
+
+    public String toJSON(int generation)
+    {
+        JSONObject chromosome = new JSONObject();
+        JSONObject network = new JSONObject();
+        JSONArray links = new JSONArray();
+        JSONArray hidden = new JSONArray();
+
+        for(LinkGene linkGene : linkGenes)
+        {
+            JSONObject obj = new JSONObject();
+            obj.put("w", linkGene.getWeight());
+            obj.put("startNode", linkGene.getStartNode());
+            obj.put("endNode", linkGene.getEndNode());
+            obj.put("startLayer", linkGene.getStartLayer());
+            obj.put("isActivated", linkGene.isActivated());
+
+            links.add(obj);
+        }
+        network.put("input",networkGene.getNumberOfInputNodes());
+        network.put("output",networkGene.getNumberOfOutputNodes());
+        for(int i : networkGene.getNumberOfHiddenNodes())
+        {
+            hidden.add(i);
+        }
+        network.put("hidden", hidden);
+        chromosome.put("fitness", fitnessValue);
+        chromosome.put("generation", generation);
+        chromosome.put("network", network);
+        chromosome.put("links", links);
+
+        return chromosome.toJSONString();
     }
 }
