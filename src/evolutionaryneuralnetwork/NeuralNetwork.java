@@ -13,6 +13,7 @@ public class NeuralNetwork {
     private int[] numberOfHiddenNodes;
     private int numberOfOutputs;
     ArrayList<LinkGene> linkGenes;
+    ArrayList<NodeGene> nodeGenes;
 
     /**
      *
@@ -26,6 +27,7 @@ public class NeuralNetwork {
         this.numberOfHiddenNodes = numberOfHiddenNodes;
         this.numberOfOutputs = numberOfOutputs;
         linkGenes = new ArrayList<LinkGene>();
+        nodeGenes = new ArrayList<NodeGene>();
         networkLayers = createNodes(numberOfInputs, numberOfHiddenNodes, numberOfOutputs);
         createLinks(networkLayers);
     }
@@ -33,9 +35,11 @@ public class NeuralNetwork {
         this.numberOfInputs = chromosome.getNetworkGene().getNumberOfInputNodes();
         this.numberOfHiddenNodes = chromosome.getNetworkGene().getNumberOfHiddenNodes();
         this.numberOfOutputs = chromosome.getNetworkGene().getNumberOfOutputNodes();
-        networkLayers = createNodes(numberOfInputs, numberOfHiddenNodes, numberOfOutputs);
+        nodeGenes = chromosome.getNodeGenes();
+        networkLayers = createNodes(numberOfInputs, numberOfHiddenNodes, numberOfOutputs, nodeGenes);
         linkGenes = chromosome.getLinkGenes();
         createLinks(networkLayers,linkGenes);
+
 
     }
 
@@ -52,14 +56,25 @@ public class NeuralNetwork {
         ArrayList<Layer> layers = new ArrayList<Layer>();
         Layer inputLayer = new Layer();
         for(int i = 0; i<numberOfInputs;i++){
-            inputLayer.addNode(new Node());
+            Node tmpNode = new Node();
+            int functionType = randInt(1,tmpNode.getNumberOfFunctions());
+            tmpNode.setFunctionType(functionType);
+            inputLayer.addNode(tmpNode);
+            nodeGenes.add(new NodeGene(0, i, functionType));
+
         }
         layers.add(inputLayer);
         Layer hiddenLayer;
-        for(int i: numberOfHiddenNodes){
+        for(int i = 0; i< numberOfHiddenNodes.length; i++){
+            int numberOfNodes = numberOfHiddenNodes[i];
             hiddenLayer = new Layer();
-            for(int j = 0; j<i; j++){
-                hiddenLayer.addNode(new Node());
+            for(int j = 0; j<numberOfNodes; j++){
+                Node tmpNode = new Node();
+                int functionType = randInt(1,tmpNode.getNumberOfFunctions());
+                tmpNode.setFunctionType(functionType);
+                hiddenLayer.addNode(tmpNode);
+                nodeGenes.add(new NodeGene(i + 1, j, functionType));
+
             }
             layers.add(hiddenLayer);
         }
@@ -68,6 +83,44 @@ public class NeuralNetwork {
             Node tmpNode = new Node();
             tmpNode.setFunctionType(0);
             outputLayer.addNode(tmpNode);
+            nodeGenes.add(new NodeGene(numberOfHiddenNodes.length + 1, i, 0));
+        }
+        layers.add(outputLayer);
+        return layers;
+    }
+
+    private ArrayList<Layer> createNodes(int numberOfInputs, int[] numberOfHiddenNodes, int numberOfOutputs, ArrayList<NodeGene> nodeGenes){
+        ArrayList<Layer> layers = new ArrayList<Layer>();
+        Layer inputLayer = new Layer();
+        int nodeCounter = 0;
+        for(int i = 0; i<numberOfInputs;i++){
+            NodeGene tmpNodeGene = nodeGenes.get(nodeCounter);
+            Node tmpNode = new Node();
+            tmpNode.setFunctionType(tmpNodeGene.getTransferFunction());
+            inputLayer.addNode(tmpNode);
+            nodeCounter++;
+        }
+        layers.add(inputLayer);
+        Layer hiddenLayer;
+        for(int i = 0; i< numberOfHiddenNodes.length; i++){
+            int numberOfNodes = numberOfHiddenNodes[i];
+            hiddenLayer = new Layer();
+            for(int j = 0; j<numberOfNodes; j++){
+                NodeGene tmpNodeGene = nodeGenes.get(nodeCounter);
+                Node tmpNode = new Node();
+                tmpNode.setFunctionType(tmpNodeGene.getTransferFunction());
+                hiddenLayer.addNode(tmpNode);
+                nodeCounter++;
+            }
+            layers.add(hiddenLayer);
+        }
+        Layer outputLayer = new Layer();
+        for(int i = 0; i<numberOfOutputs;i++){
+            NodeGene tmpNodeGene = nodeGenes.get(nodeCounter);
+            Node tmpNode = new Node();
+            tmpNode.setFunctionType(tmpNodeGene.getTransferFunction());
+            outputLayer.addNode(tmpNode);
+            nodeCounter++;
         }
         layers.add(outputLayer);
         return layers;
@@ -100,6 +153,7 @@ public class NeuralNetwork {
 
     private void createLinks(ArrayList<Layer> networkLayers, ArrayList<LinkGene> linkGenes){
         for(LinkGene linkGene: linkGenes){
+
             Node startNode = networkLayers.get(linkGene.getStartLayer()).getNodes().get(linkGene.getStartNode());
             Node endNode = networkLayers.get(linkGene.getStartLayer()+1).getNodes().get(linkGene.getEndNode());
             Link link = new Link(startNode, linkGene.getWeight(), linkGene.isActivated());
@@ -140,7 +194,30 @@ public class NeuralNetwork {
 
     public Chromosome generateChromosome(){
         NetworkGene networkGene = new NetworkGene(numberOfInputs,numberOfHiddenNodes,numberOfOutputs);
-        return new Chromosome(networkGene,linkGenes);
+        return new Chromosome(networkGene,linkGenes, nodeGenes);
 
+    }
+
+    /**
+     * Returns a pseudo-random number between min and max, inclusive.
+     * The difference between min and max can be at most
+     * <code>Integer.MAX_VALUE - 1</code>.
+     *
+     * @param min Minimum value
+     * @param max Maximum value.  Must be greater than min.
+     * @return Integer between min and max, inclusive.
+     * @see java.util.Random#nextInt(int)
+     */
+    public static int randInt(int min, int max) {
+
+        // Usually this should be a field rather than a method variable so
+        // that it is not re-seeded every call.
+        Random rand = new Random();
+
+        // nextInt is normally exclusive of the top value,
+        // so add 1 to make it inclusive
+        int randomNum = rand.nextInt((max - min) + 1) + min;
+
+        return randomNum;
     }
 }

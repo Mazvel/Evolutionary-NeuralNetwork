@@ -6,6 +6,7 @@ import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 
 import java.util.ArrayList;
+import java.util.Random;
 
 /**
  * Created by MagnusSnorri on 30/05/2014.
@@ -16,7 +17,7 @@ class Test {
 
     public static void main(String[] args) {
 
-        NeuralNetwork nn = new NeuralNetwork(2,new int[]{2}, 2);
+    /*    NeuralNetwork nn = new NeuralNetwork(2,new int[]{2}, 2);
         Chromosome c = nn.generateChromosome();
 
         ArrayList<LinkGene> linkGenes = c.getLinkGenes();
@@ -74,13 +75,14 @@ class Test {
 
         Logger log = new Logger("test.txt", true);
         log.Log("Hello");
-
-        Evolution evolution = new Evolution(0.2, 0.001, generationSize, 0.1, true);
+        */
+        Evolution evolution = new Evolution(0.2, 0.001, generationSize, 0.1, true, 0.01);
         int numberOfGenerations = 200;
         int numberOfActions = 10;
         ArrayList<Chromosome> population = initializePopulation();
         for(int i = 0; i<numberOfGenerations;i++){
             for(int j = 0; j<generationSize;j++) {
+
                 NeuralNetwork n = new NeuralNetwork(population.get(j));
                 double fitnessSum = 0;
                 for (int k = 0; k < numberOfActions; k++) {
@@ -105,7 +107,11 @@ class Test {
     public static ArrayList<Chromosome> initializePopulation(){
         ArrayList<Chromosome> population = new ArrayList<Chromosome>();
         for(int i = 0; i < generationSize; i++){
-            NeuralNetwork neuralNetwork = new NeuralNetwork(5, new int[]{8}, 3);
+            int[] hiddenLayers = new int[randInt(1,3)];
+            for(int j = 0; j< hiddenLayers.length; j++){
+                hiddenLayers[j] = randInt(2,6);
+            }
+            NeuralNetwork neuralNetwork = new NeuralNetwork(5, hiddenLayers, 3);
             population.add(neuralNetwork.generateChromosome());
         }
         return population;
@@ -132,6 +138,19 @@ class Test {
       //  inputs[3] = -1.45;
       //  inputs[4] = 0.124;
         return inputs;
+    }
+
+    public static int randInt(int min, int max) {
+
+        // Usually this should be a field rather than a method variable so
+        // that it is not re-seeded every call.
+        Random rand = new Random();
+
+        // nextInt is normally exclusive of the top value,
+        // so add 1 to make it inclusive
+        int randomNum = rand.nextInt((max - min) + 1) + min;
+
+        return randomNum;
     }
 
 }

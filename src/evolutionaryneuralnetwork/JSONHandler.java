@@ -12,7 +12,7 @@ import java.util.ArrayList;
  */
 public class JSONHandler {
 
-    public JSONObject readJSONFile(String filename)
+    public static JSONObject readJSONFile(String filename)
     {
         JSONParser parser = new JSONParser();
         try {
@@ -33,7 +33,7 @@ public class JSONHandler {
         return null;
     }
 
-    public void saveJSONString(String filename, String jsonString)
+    public static void saveJSONString(String filename, String jsonString)
     {
         try
         {
@@ -47,7 +47,7 @@ public class JSONHandler {
         }
     }
 
-    public void saveGenerationToJSON(ArrayList<String> jsonChromosome, String filename)
+    public static void saveGenerationToJSON(ArrayList<String> jsonChromosome, String filename)
     {
         JSONObject generation = new JSONObject();
         int id = 0;
