@@ -1,88 +1,27 @@
 package evolutionaryneuralnetwork;
 
-import org.json.simple.JSONArray;
-import org.json.simple.JSONObject;
-import org.json.simple.parser.JSONParser;
-import org.json.simple.parser.ParseException;
-
 import java.util.ArrayList;
-import java.util.Random;
 
 /**
  * Created by MagnusSnorri on 30/05/2014.
  */
 class Test {
 
-    private static int generationSize = 400;
+    private static int generationSize = 200;
 
     public static void main(String[] args) {
-
-    /*    NeuralNetwork nn = new NeuralNetwork(2,new int[]{2}, 2);
-        Chromosome c = nn.generateChromosome();
-
-        ArrayList<LinkGene> linkGenes = c.getLinkGenes();
-        NetworkGene networkGene = c.getNetworkGene();
-        double fitness = c.getFitnessValue();
-
-        JSONArray links = new JSONArray();
-        int counter = 0;
-        for(LinkGene lg : linkGenes)
-        {
-            JSONObject obj = new JSONObject();
-            obj.put("w", lg.getWeight());
-            obj.put("sl", lg.getStartLayer());
-            obj.put("sn", lg.getStartNode());
-            obj.put("en", lg.getEndNode());
-            obj.put("act",lg.isActivated());
-
-            links.add(obj);
-        }
-
-        JSONObject network = new JSONObject();
-        network.put("input",networkGene.getNumberOfInputNodes());
-        JSONArray h = new JSONArray();
-        for(int i : networkGene.getNumberOfHiddenNodes())
-        {
-            h.add(i);
-        }
-        network.put("hidden", h);
-        network.put("output", networkGene.getNumberOfOutputNodes());
-
-        JSONObject chromo = new JSONObject();
-        chromo.put("links", links);
-        chromo.put("network", network);
-        chromo.put("fitness", fitness);
-
-
-        System.out.println(chromo.toJSONString());
-
-
-        String json = chromo.toJSONString();
-
-        JSONParser parser = new JSONParser();
-        try
-        {
-            Object obj = parser.parse(json);
-            JSONObject jsonObj = (JSONObject)obj;
-            JSONObject chr = (JSONObject) jsonObj;
-            System.out.println(chr.get("links"));
-
-
-        } catch (ParseException e) {
-            e.printStackTrace();
-        }
-
-
-        Logger log = new Logger("test.txt", true);
-        log.Log("Hello");
-        */
-        Evolution evolution = new Evolution(0.2, 0.001, generationSize, 0.1, true, 0.01);
-        int numberOfGenerations = 200;
+        //Basic test that creates network with 5 inputs, 8 nodes in the hidden layer and 3 outputs.
+        //The network is then fed random numbers on some interval and the goal is to minimize the total distance
+        //summed over all the outputs and their target number.
+        //In the first generation the best fitness value is about 4 and in the last generation the best fitness value
+        //is 0.1 so this shows that the evolutionary neural network converges on better solution over different
+        //generations.
+        Evolution evolution = new Evolution(0.2, 0.001, generationSize, 0.1, true);
+        int numberOfGenerations = 100;
         int numberOfActions = 10;
         ArrayList<Chromosome> population = initializePopulation();
         for(int i = 0; i<numberOfGenerations;i++){
             for(int j = 0; j<generationSize;j++) {
-
                 NeuralNetwork n = new NeuralNetwork(population.get(j));
                 double fitnessSum = 0;
                 for (int k = 0; k < numberOfActions; k++) {
@@ -94,24 +33,12 @@ class Test {
             population = evolution.generateNewPopulation(population);
         }
         System.out.println("Done");
-
-        evolutionaryneuralnetwork.NeuralNetwork neuralNetwork = new evolutionaryneuralnetwork.NeuralNetwork(5, new int[]{8}, 3);
-        double[] output = new double[2];
-        output = neuralNetwork.evaluateNeuralNetwork(new double[]{0.4, -2.3, 3.4,-2.4,0.1});
-        for(double d: output){
-            System.out.println("Output: " + d);
-        }
-
     }
 
     public static ArrayList<Chromosome> initializePopulation(){
         ArrayList<Chromosome> population = new ArrayList<Chromosome>();
         for(int i = 0; i < generationSize; i++){
-            int[] hiddenLayers = new int[randInt(1,3)];
-            for(int j = 0; j< hiddenLayers.length; j++){
-                hiddenLayers[j] = randInt(2,6);
-            }
-            NeuralNetwork neuralNetwork = new NeuralNetwork(5, hiddenLayers, 3);
+            NeuralNetwork neuralNetwork = new NeuralNetwork(5, new int[]{8}, 3);
             population.add(neuralNetwork.generateChromosome());
         }
         return population;
@@ -132,25 +59,7 @@ class Test {
         inputs[2] = Math.random()*4 - 3;
         inputs[3] = Math.random() - 1;
         inputs[4] = Math.random()*3 - 1;
-       // inputs[0] = -0.23;
-       // inputs[1] = 0.643;
-       // inputs[2] = 1.234;
-      //  inputs[3] = -1.45;
-      //  inputs[4] = 0.124;
         return inputs;
-    }
-
-    public static int randInt(int min, int max) {
-
-        // Usually this should be a field rather than a method variable so
-        // that it is not re-seeded every call.
-        Random rand = new Random();
-
-        // nextInt is normally exclusive of the top value,
-        // so add 1 to make it inclusive
-        int randomNum = rand.nextInt((max - min) + 1) + min;
-
-        return randomNum;
     }
 
 }

@@ -8,24 +8,22 @@ import java.util.Iterator;
 
 /**
  * Created by MagnusSnorri on 30/05/2014.
+ * This object contains information about the neural network stored in networkGene and linkGenes.
  */
 public class Chromosome implements Comparable<Chromosome> {
     private NetworkGene networkGene;
     private ArrayList<LinkGene> linkGenes;
-    private ArrayList<NodeGene> nodeGenes;
     private Double fitnessValue;
 
-    public Chromosome(NetworkGene networkGene, ArrayList<LinkGene> linkGenes, ArrayList<NodeGene> nodeGenes){
+    public Chromosome(NetworkGene networkGene, ArrayList<LinkGene> linkGenes){
         this.networkGene = networkGene;
-        this.linkGenes = linkGenes;
-        this.nodeGenes = nodeGenes;
+        this.linkGenes = linkGenes;;
         fitnessValue = 0.0;
     }
 
     public Chromosome(JSONObject chromosome)
     {
         this.linkGenes = new ArrayList<LinkGene>();
-        this.nodeGenes = new ArrayList<NodeGene>();
         this.fitnessValue = (Double)chromosome.get("fitness");
 
         JSONObject network = (JSONObject)chromosome.get("network");
@@ -49,16 +47,6 @@ public class Chromosome implements Comparable<Chromosome> {
             int endNode = objToInteger(obj.get("endNode"));
             this.linkGenes.add(new LinkGene(startLayer,startNode,endNode,w,active));
         }
-        JSONArray nodes = (JSONArray)chromosome.get("nodes");
-        Iterator<JSONObject> nodeIter = nodes.iterator();
-        while (nodeIter.hasNext())
-        {
-            JSONObject obj = linkIter.next();
-            int layer = objToInteger(obj.get("layer"));
-            int index = objToInteger(obj.get("index"));
-            int transferFunction = objToInteger(obj.get("transferFunction"));
-            this.nodeGenes.add(new NodeGene(layer, index, transferFunction));
-        }
     }
 
     public void setFitnessValue(double fitnessValue){this.fitnessValue = fitnessValue;}
@@ -68,8 +56,6 @@ public class Chromosome implements Comparable<Chromosome> {
     public NetworkGene getNetworkGene(){return networkGene;}
 
     public ArrayList<LinkGene> getLinkGenes(){return linkGenes;}
-
-    public ArrayList<NodeGene> getNodeGenes(){return nodeGenes;}
 
     public void setLinkGenes(ArrayList<LinkGene> linkGenes){this.linkGenes = linkGenes;}
 
@@ -96,15 +82,6 @@ public class Chromosome implements Comparable<Chromosome> {
             obj.put("isActivated", linkGene.isActivated());
 
             links.add(obj);
-        }
-        for(NodeGene nodeGene : nodeGenes)
-        {
-            JSONObject obj = new JSONObject();
-            obj.put("layer", nodeGene.getLayer());
-            obj.put("index", nodeGene.getIndex());
-            obj.put("transferFunction", nodeGene.getTransferFunction());
-
-            nodes.add(obj);
         }
         network.put("input",networkGene.getNumberOfInputNodes());
         network.put("output",networkGene.getNumberOfOutputNodes());

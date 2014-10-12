@@ -13,7 +13,6 @@ public class Node {
     private int functionType;
     private ArrayList<Link> inputNodes;
     private double value;
-    private int numberOfFunctions;
 
     /**
 
@@ -22,7 +21,6 @@ public class Node {
         inputNodes = new ArrayList<Link>();
         value = 0;
         functionType = 1;
-        numberOfFunctions = 3;
     }
 
     /**
@@ -50,12 +48,6 @@ public class Node {
     public double getValue(){return value;}
 
     /**
-     * Function to get number of different transfer function types.
-     * @return
-     */
-    public int getNumberOfFunctions(){return numberOfFunctions;}
-
-    /**
      * This function evaluates the value for this node in the neural network based on it's inputs.
      * After calculating the sum of weight*value for every input node it calls the appropriate value
      * function based on the functionType variable.
@@ -75,24 +67,6 @@ public class Node {
             case 1: {
                 value = sigmoid(sum);
                 break;
-            }
-            case 2: {
-                double tmp = sigmoid(sum);
-                if (tmp > 0.8){
-                    value = 1;
-                }else {
-                    value = 0;
-                }
-
-            }
-
-            case 3: {
-                double tmp = sigmoid(sum);
-                if (tmp > 0.2){
-                    value = 1;
-                }else {
-                    value = 0;
-                }
             }
             default: {
                 break;
